@@ -1,8 +1,15 @@
 from application import app, db
 from application.models import Tasks
+from flask import render_template
+
+@app.route('/')
+@app.route('/home')
+def home():
+    all_tasks = Tasks.query.all()
+    return render_template('index.html', title="Home", all_tasks=all_tasks)
 
 @app.route('/create/task')
-def add():
+def create_task():
     new_task = Tasks(description="New Task")
     db.session.add(new_task)
     db.session.commit()
@@ -11,11 +18,14 @@ def add():
 @app.route('/read/allTasks')
 def read_tasks():
     all_tasks = Tasks.query.all()
-
     tasks_dict = {"tasks": []}
-
     for task in all_tasks:
-        tasks_dict["tasks"].append({"description": task.description, "completed": task.completed})
+        tasks_dict["tasks"].append(
+            { 
+                "description": task.description, 
+                "completed": task.completed
+            }
+        )
 
     return tasks_dict
 
@@ -31,11 +41,18 @@ def delete(id):
     task = Tasks.query.get(id)
     db.session.delete(task)
     db.session.commit()
-    return f"Task {id} removed"
+    return f"Task {id} deleted"
 
 @app.route('/completed/task/<int:id>')
-def completed(id):
+def completed_task(id):
     task = Tasks.query.get(id) 
     task.completed = True 
     db.session.commit() 
     return f"Task {id} completed!"
+
+@app.route('/incomplete/task/<int:id>')
+def incomplete_task(id):
+    task = Tasks.query.get(id) 
+    task.completed = False
+    db.session.commit() 
+    return f"Task {id} incomplete!"
