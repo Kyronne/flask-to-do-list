@@ -7,10 +7,11 @@
         <p>
             Task ID: {{ task.id }}<br>
             Task Description: {{ task.description }}<br>
+            <a href="{{ url_for('update_task', id=task.id) }}">Update Task</a>
         </p>    
     {% endif %}
     {% endfor %}
-
+    
     <h2>Completed Tasks</h2>
     {% for task in all_tasks %}
     {% if task.completed == True %}
@@ -20,6 +21,5 @@
         </p>    
     {% endif %}
     {% endfor %}
-
 
 {% endblock body %}
